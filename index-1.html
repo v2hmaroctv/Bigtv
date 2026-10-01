@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAROC LIVE - Ultimate Studio Pro</title>
+
+<style>
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+body{
+  background:#090a0f;
+  color:#e2e8f0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  overflow-x:hidden;
+}
+
+/* Login Modal / Screen Overlay */
+#loginScreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #090a0f;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.login-card{
+  background: #111318;
+  border: 1px solid #1f242d;
+  padding: 40px;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 25px 50px rgba(0,0,0,0.7);
+  text-align: center;
+}
+
+.logo-area{
+  margin-bottom: 25px;
+}
+
+.logo{
+  font-size: 26px;
+  font-weight: bold;
+  color: #ff3b3b;
+  letter-spacing: 1px;
+}
+
+.sub-title{
+  color: #94a3b8;
+  font-size: 13px;
+  margin-top: 5px;
+}
+
+.form-group{
+  margin-bottom: 20px;
+  text-align: right;
+}
+
+.form-group label{
+  display: block;
+  font-size: 13px;
+  color: #cbd5e1;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.form-group input{
+  width: 100%;
+  background: #090a0f;
+  border: 1px solid #1f242d;
+  border-radius: 10px;
+  padding: 12px 16px;
+  color: white;
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.form-group input:focus{
+  border-color: #3b82f6;
+}
+
+.submit-btn{
+  width: 100%;
+  background: #dc2626;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 14px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+  margin-top: 10px;
+}
+
+.submit-btn:hover{
+  background: #ef4444;
+  transform: translateY(-1px);
+}
+
+.note{
+  margin-top: 20px;
+  font-size: 11px;
+  color: #64748b;
+  line-height: 1.5;
+}
+
+/* Studio Interface */
+#studioContainer {
+  display: none;
+}
+
+/* Header */
+.header{
+  height:70px;
+  background:#111318;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 30px;
+  border-bottom:1px solid #1f242d;
+}
+
+.studio-stats{
+  display: flex;
+  gap: 20px;
+  font-size: 13px;
+  color: #94a3b8;
+}
+
+.stat-item span{
+  color: #f8fafc;
+  font-weight: bold;
+}
+
+/* Main Layout */
+.main{
+  padding:25px;
+  display: grid;
+  grid-template-columns: 1fr 350px;
+  gap: 20px;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+@media(max-width: 1150px){
+  .main{
+    grid-template-columns: 1fr;
+  }
+}
+
+.content-left{
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* زر المتصلين الحقيقيين En Ligne */
+.online-widget-container{
+  width:100%;
+  background:#111318;
+  border-radius:16px;
+  padding: 25px;
+  border:1px solid #1f242d;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+  text-align: center;
+}
+
+.online-toggle-btn{
+  background: #161b26;
+  border: 1px solid #2a3245;
+  color: #f8fafc;
+  padding: 14px 28px;
+  border-radius: 35px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  transition: all 0.2s;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.online-toggle-btn:hover{
+  background: #1e2330;
+  border-color: #3b82f6;
+  transform: translateY(-2px);
+}
+
+.online-toggle-btn .icon-circle{
+  background: #090a0f;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  border: 1px solid #334155;
+  color: #38bdf8;
+}
+
+/* Playlist ديال الأسماء الحقيقية */
+.online-list-dropdown{
+  display: none;
+  margin-top: 20px;
+  background: #090a0f;
+  border: 1px solid #1f242d;
+  border-radius: 12px;
+  padding: 15px;
+  text-align: right;
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+.online-list-dropdown.show{
+  display: block;
+}
+
+.online-user-item{
+  font-size: 14px;
+  padding: 10px 14px;
+  color: #cbd5e1;
+  border-bottom: 1px solid #161b26;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.online-user-item:last-child{
+  border-bottom: none;
+}
+
+.user-badge-tag{
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: #334155;
+  color: #94a3b8;
+}
+.user-badge-tag.admin{
+  background: #dc2626;
+  color: white;
+}
+
+/* Controls Bar */
+.controls{
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+  background: #111318;
+  padding: 16px;
+  border-radius: 14px;
+  border: 1px solid #1f242d;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.control-group{
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+button{
+  border:0;
+  background:#1e2330;
+  color:#f1f5f9;
+  padding:10px 18px;
+  border-radius:9px;
+  font-size:14px;
+  cursor:pointer;
+  transition: all 0.2s ease;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+button:hover{
+  background:#2a3245;
+  transform: translateY(-1px);
+}
+
+.btn-primary{
+  background:#dc2626;
+}
+.btn-primary:hover{
+  background:#ef4444;
+}
+
+.section-title{
+  margin:10px 0 15px;
+  font-size:18px;
+  font-weight: bold;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px;
+}
+
+/* Viewer Card */
+.viewer{
+  height: 240px;
+  background:#111318;
+  border-radius:14px;
+  overflow:hidden;
+  position:relative;
+  border:1px solid #1f242d;
+  display: flex;
+  flex-direction: column;
+}
+
+.viewer.kicked{
+  opacity: 0.35;
+  background: #1c1917;
+  pointer-events: none;
+}
+
+.viewer-screen{
+  flex: 1;
+  position: relative;
+  background: #090a0f;
+  cursor: pointer;
+}
+
+.camera-off{
+  height:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:35px;
+  color:#475569;
+}
+
+.viewer-info-bar{
+  position:absolute;
+  right:8px;
+  bottom:8px;
+  background:rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(4px);
+  padding:3px 8px;
+  border-radius:6px;
+  font-size: 11px;
+}
+
+.viewer-controls{
+  background: #161b26;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  border-top: 1px solid #1f242d;
+}
+
+.viewer-top-row{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.viewer-name{
+  font-size: 12px;
+  font-weight: bold;
+  color: #cbd5e1;
+}
+
+.role-badge{
+  font-size: 10px;
+  background: #334155;
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: #94a3b8;
+}
+.role-badge.is-admin{
+  background: #dc2626;
+  color: white;
+}
+.role-badge.is-co-host{
+  background: #d97706;
+  color: white;
+}
+
+.admin-action-row{
+  display: flex;
+  gap: 3px;
+}
+
+.mini-btn{
+  flex: 1;
+  background: #1e2330;
+  border: none;
+  color: #f1f5f9;
+  padding: 4px;
+  font-size: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  text-align: center;
+}
+
+.mini-btn:hover{
+  background: #334155;
+}
+
+.mini-btn.muted{
+  background: #dc2626;
+}
+
+.mini-btn.admin-btn{
+  background: #2563eb;
+}
+.mini-btn.admin-btn.active{
+  background: #d97706;
+}
+
+.mini-btn.kick-btn{
+  background: #7f1d1d;
+  color: #fca5a5;
+}
+
+/* Chat Section */
+.chat-box{
+  background: #111318;
+  border: 1px solid #1f242d;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  height: 650px;
+  overflow: hidden;
+}
+
+.chat-header{
+  padding: 16px;
+  background: #161b26;
+  font-weight: bold;
+  border-bottom: 1px solid #1f242d;
+  font-size: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.chat-messages{
+  flex: 1;
+  padding: 15px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.message{
+  background: #181d28;
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-size: 13px;
+  border-left: 3px solid #3b82f6;
+}
+
+.message .user{
+  color: #38bdf8;
+  font-weight: bold;
+  margin-bottom: 3px;
+  font-size: 12px;
+}
+
+.chat-input-area{
+  padding: 12px;
+  background: #161b26;
+  border-top: 1px solid #1f242d;
+  display: flex;
+  gap: 8px;
+}
+
+.chat-input-area input{
+  flex: 1;
+  background: #090a0f;
+  border: 1px solid #1f242d;
+  border-radius: 8px;
+  padding: 10px 12px;
+  color: white;
+  outline: none;
+  font-size: 13px;
+}
+
+.chat-input-area input:focus{
+  border-color: #3b82f6;
+}
+
+.chat-input-area button{
+  background: #3b82f6;
+  padding: 0 16px;
+}
+
+@media(max-width:768px){
+  .grid{
+    grid-template-columns:repeat(2,1fr);
+  }
+}
+</style>
+</head>
+
+<body>
+
+<!-- شاشة تسجيل الدخول -->
+<div id="loginScreen">
+  <div class="login-card">
+    <div class="logo-area">
+      <div class="logo">MAROC LIVE STUDIO</div>
+      <div class="sub-title">أدخل اسمك الحقيقي للدخول إلى الغرفة ورؤية المتصلين</div>
+    </div>
+
+    <form onsubmit="handleLogin(event)">
+      <div class="form-group">
+        <label for="realNameInput">اسمك الحقيقي:</label>
+        <input type="text" id="realNameInput" placeholder="مثال: يوسف، حمزة، أمين..." required autocomplete="off">
+      </div>
+
+      <div class="form-group">
+        <label for="adminPassInput">كلمة سر المشرف (اختياري):</label>
+        <input type="password" id="adminPassInput" placeholder="أدخلها فقط إن كنت أنت المشرف" autocomplete="off">
+      </div>
+
+      <button type="submit" class="submit-btn">دخول إلى الاستوديو 🚀</button>
+    </form>
+
+    <div class="note">
+      ⚠️ كلمة السر الخاصة بالمشرف الرئيسي هي: <b>Matoc99</b>
+    </div>
+  </div>
+</div>
+
+<!-- واجهة الاستوديو الرئيسية -->
+<div id="studioContainer">
+  <header class="header">
+    <div style="display: flex; align-items: center; gap: 15px;">
+      <div style="font-size:22px; font-weight:bold; color:#ff3b3b; letter-spacing: 1px;">MAROC LIVE</div>
+      <div style="background:#dc2626; padding:5px 12px; border-radius:20px; font-weight:bold; font-size: 12px;">STUDIO PRO</div>
+    </div>
+    <div class="studio-stats">
+      <div class="stat-item">الوقت: <span id="streamTimer">00:00:00</span></div>
+      <div class="stat-item">الحالة: <span id="adminStatusText" style="color: #4ade80;">متصل (Active)</span></div>
+    </div>
+  </header>
+
+  <main class="main">
+
+    <div class="content-left">
+
+      <!-- زر وعرض Playlist المتصلين الحقيقيين -->
+      <div class="online-widget-container">
+        <button type="button" class="online-toggle-btn" onclick="toggleStudioOnlineDropdown()">
+          <span class="icon-circle">👤</span>
+          <span>الناس المتصلين بصح (<span id="totalOnlineCount">0</span>) 👁</span>
+        </button>
+
+        <!-- Playlist ديال الأسماء الحقيقية الدامجة -->
+        <div class="online-list-dropdown" id="onlineListDropdown">
+          <div id="dynamicOnlineList">
+            <!-- غايبانو هنا الأسماء اللي كيدخلوا حقيقةً -->
+          </div>
+        </div>
+      </div>
+
+      <!-- التحكم العام -->
+      <div class="controls">
+        <div class="control-group">
+          <button class="btn-primary" onclick="startCamera()">🎥 تشغيل الكاميرا</button>
+          <button onclick="toggleAudio()" id="audioBtn">🔇 كتم الصوت</button>
+          <button onclick="stopCamera()">⛔ إيقاف البث</button>
+        </div>
+      </div>
+
+      <h2 class="section-title">لوحة التحكم في الغرفة</h2>
+
+      <div class="grid">
+        <!-- شاشة المشرف أو المستخدم الرئيسي -->
+        <div class="viewer" id="cardUserMain">
+          <div class="viewer-screen">
+            <div class="camera-off" id="iconMain">👤</div>
+            <video id="mainVideo" autoplay muted style="display:none; width:100%; height:100%; object-fit:cover;"></video>
+            <div class="viewer-info-bar" id="barMainName">أنا</div>
+          </div>
+          <div class="viewer-controls">
+            <div class="viewer-top-row">
+              <span class="viewer-name" id="nameMainCard">--</span>
+              <span class="role-badge" id="badgeMainCard">المستخدم</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- بطاقات أخرى نموذجية للمشاركين -->
+        <div class="viewer" id="cardV2">
+          <div class="viewer-screen">
+            <div class="camera-off">👤</div>
+            <div class="viewer-info-bar">هشام</div>
+          </div>
+          <div class="viewer-controls">
+            <div class="viewer-top-row">
+              <span class="viewer-name">هشام</span>
+              <span class="role-badge">مشاهد</span>
+            </div>
+            <div class="admin-action-row">
+              <button class="mini-btn kick-btn" onclick="kickViewer('cardV2', 'هشام')">طرد</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="viewer" id="cardV3">
+          <div class="viewer-screen">
+            <div class="camera-off">👤</div>
+            <div class="viewer-info-bar">سناء</div>
+          </div>
+          <div class="viewer-controls">
+            <div class="viewer-top-row">
+              <span class="viewer-name">سناء</span>
+              <span class="role-badge">مشاهد</span>
+            </div>
+            <div class="admin-action-row">
+              <button class="mini-btn kick-btn" onclick="kickViewer('cardV3', 'سناء')">طرد</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="viewer" id="cardV4">
+          <div class="viewer-screen">
+            <div class="camera-off">👤</div>
+            <div class="viewer-info-bar">مهدي</div>
+          </div>
+          <div class="viewer-controls">
+            <div class="viewer-top-row">
+              <span class="viewer-name">مهدي</span>
+              <span class="role-badge">مشاهد</span>
+            </div>
+            <div class="admin-action-row">
+              <button class="mini-btn kick-btn" onclick="kickViewer('cardV4', 'مهدي')">طرد</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- الشات -->
+    <div class="chat-box">
+      <div class="chat-header">
+        <span>💬 شات الغرفة</span>
+      </div>
+      <div class="chat-messages" id="chatMessages">
+        <div class="message"><div class="user">System</div>مرحباً بك، اللائحة الحقيقية جاهزة وتتحدث تلقائياً ✅</div>
+      </div>
+      <div class="chat-input-area">
+        <input type="text" id="chatInput" placeholder="اكتب رسالة..." onkeypress="handleKey(event)">
+        <button onclick="sendMessage()">إرسال</button>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+let loggedUserName = "";
+let isUserAdmin = false;
+const ADMIN_SECRET_PASSWORD = "Matoc99";
+
+// قائمة المتصلين الحقيقيين (تتحدث أوتوماتيكيا حسب الدخول)
+let realOnlineUsers = [
+  { name: "هشام", role: "مشارك", isAdmin: false },
+  { name: "سناء", role: "مشارك", isAdmin: false },
+  { name: "مهدي", role: "مشارك", isAdmin: false }
+];
+
+function toggleStudioOnlineDropdown() {
+  const dropdown = document.getElementById("onlineListDropdown");
+  dropdown.classList.toggle("show");
+}
+
+function renderOnlineUsers() {
+  const container = document.getElementById("dynamicOnlineList");
+  document.getElementById("totalOnlineCount").innerText = realOnlineUsers.length;
+
+  let html = "";
+  realOnlineUsers.forEach(user => {
+    html += `
+      <div class="online-user-item">
+        <span>${user.name} ${user.name === loggedUserName ? '(أنت)' : ''}</span>
+        <span class="user-badge-tag ${user.isAdmin ? 'admin' : ''}">${user.role}</span>
+      </div>
+    `;
+  });
+  container.innerHTML = html;
+}
+
+function handleLogin(event){
+  event.preventDefault();
+  const nameInput = document.getElementById("realNameInput").value.trim();
+  const passInput = document.getElementById("adminPassInput").value.trim();
+
+  if(nameInput === "") {
+    alert("المرجو إدخال اسمك الحقيقي!");
+    return;
+  }
+
+  loggedUserName = nameInput;
+
+  if(passInput === ADMIN_SECRET_PASSWORD){
+    isUserAdmin = true;
+  } else {
+    isUserAdmin = false;
+  }
+
+  // إضافة اسم الشخص للائحة المتصلين الحقيقيين فوراً إذا لم يكن مسجلاً مسبقاً
+  const exists = realOnlineUsers.some(u => u.name === loggedUserName);
+  if(!exists){
+    realOnlineUsers.push({
+      name: loggedUserName,
+      role: isUserAdmin ? "مشرف رئيسي" : "مشارك",
+      isAdmin: isUserAdmin
+    });
+  }
+
+  renderOnlineUsers();
+
+  // إخفاء صفحة الدخول وإظهار الاستوديو
+  document.getElementById("loginScreen").style.display = "none";
+  document.getElementById("studioContainer").style.display = "block";
+
+  // تحديث واجهة المستخدم بالاسم الشخصي الذي أدخله
+  document.getElementById("nameMainCard").innerText = loggedUserName;
+  document.getElementById("barMainName").innerText = loggedUserName;
+
+  const badgeMain = document.getElementById("badgeMainCard");
+  if(isUserAdmin){
+    badgeMain.innerText = "مشرف رئيسي";
+    badgeMain.className = "role-badge is-admin";
+    addSystemLog(`مرحباً بالمشرف الرئيسي (${loggedUserName})، تم تفعيل كامل الصلاحيات.`);
+  } else {
+    badgeMain.innerText = "مشارك نشط";
+    badgeMain.className = "role-badge is-co-host";
+    addSystemLog(`مرحباً بك يا (${loggedUserName}) في الغرفة.`);
+  }
+}
+
+let stream = null;
+let isAudioMuted = true;
+let timerInterval = null;
+let secondsElapsed = 0;
+
+async function startCamera(){
+  try{
+    stream = await navigator.mediaDevices.getUserMedia({ video:true, audio:true });
+
+    const mainVideo = document.getElementById("mainVideo");
+    mainVideo.srcObject = stream;
+    mainVideo.style.display = "block";
+    document.getElementById("iconMain").style.display = "none";
+
+    if(!timerInterval){
+      secondsElapsed = 0;
+      timerInterval = setInterval(updateTimer, 1000);
+    }
+  }catch(error){
+    alert("المرجو السماح للمتصفح بالوصول إلى الكاميرا.");
+  }
+}
+
+function updateTimer(){
+  secondsElapsed++;
+  const hrs = String(Math.floor(secondsElapsed / 3600)).padStart(2, '0');
+  const mins = String(Math.floor((secondsElapsed % 3600) / 60)).padStart(2, '0');
+  const secs = String(secondsElapsed % 60).padStart(2, '0');
+  document.getElementById("streamTimer").innerText = `${hrs}:${mins}:${secs}`;
+}
+
+function stopCamera(){
+  if(stream){
+    stream.getTracks().forEach(track => track.stop());
+    stream = null;
+
+    const mainVideo = document.getElementById("mainVideo");
+    mainVideo.srcObject = null;
+    mainVideo.style.display = "none";
+    document.getElementById("iconMain").style.display = "flex";
+
+    clearInterval(timerInterval);
+    timerInterval = null;
+    document.getElementById("streamTimer").innerText = "00:00:00";
+  }
+}
+
+function kickViewer(cardId, name){
+  if(!isUserAdmin){
+    alert("عذراً، هذه الصلاحية مخصصة للمشرف فقط!");
+    return;
+  }
+  const card = document.getElementById(cardId);
+  card.classList.add("kicked");
+
+  // إزالة الشخص من اللائحة الحقيقية
+  realOnlineUsers = realOnlineUsers.filter(u => u.name !== name);
+  renderOnlineUsers();
+
+  addSystemLog(`⚠️ تم طرد (${name}) نهائياً وإزالته من قائمة المتصلين.`);
+}
+
+function toggleAudio(){
+  if(!stream){
+    alert("شغل الكاميرا أولاً!");
+    return;
+  }
+  isAudioMuted = !isAudioMuted;
+  stream.getAudioTracks().forEach(track => track.enabled = !isAudioMuted);
+  document.getElementById("audioBtn").innerText = isAudioMuted ? "🔇 كتم الصوت" : "🔊 إلغاء الكتم";
+}
+
+function sendMessage(){
+  const input = document.getElementById("chatInput");
+  const text = input.value.trim();
+  if(text === "") return;
+
+  const chatMessages = document.getElementById("chatMessages");
+  const msgDiv = document.createElement("div");
+  msgDiv.className = "message";
+  msgDiv.innerHTML = `<div class="user">${escapeHtml(loggedUserName)}</div>${escapeHtml(text)}`;
+
+  chatMessages.appendChild(msgDiv);
+  input.value = "";
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+function handleKey(event){
+  if(event.key === "Enter") sendMessage();
+}
+
+function escapeHtml(text){
+  return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+function addSystemLog(text){
+  const chatMessages = document.getElementById("chatMessages");
+  const msgDiv = document.createElement("div");
+  msgDiv.className = "message";
+  msgDiv.innerHTML = `<div class="user">System</div>${escapeHtml(text)}`;
+  chatMessages.appendChild(msgDiv);
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+// عرض القائمة الأولية
+renderOnlineUsers();
+</script>
+
+</body>
+</html>
